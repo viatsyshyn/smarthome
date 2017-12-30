@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>Statistics of {{data.device}}</h1>
+<div mat-dialog-content [ngSwitch]="mode">
+    <mat-tab-group (selectedTabChange)="changeData($event)">
+        <mat-tab label="Now"></mat-tab>
+        <mat-tab label="Day"></mat-tab>
+        <mat-tab label="Week"></mat-tab>
+        <mat-tab label="Month"></mat-tab>
+    </mat-tab-group>
+
+    <div style="margin: 15px 0 0">
+        <canvas #chartCanvas width="800" height="300"></canvas>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()" tabindex="-1">Close</button>
+</div>

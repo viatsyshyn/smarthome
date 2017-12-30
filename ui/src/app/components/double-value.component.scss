@@ -1,0 +1,41 @@
+.double-value {
+  display: inline-block;
+  font-size: 20px;
+  font-weight: 600;
+  vertical-align: middle;
+  text-align: center;
+  color: #333;
+  box-sizing: border-box;
+  background: #fbfbfb;
+  position: relative;
+}
+
+.double-value::before {
+  content: ' ';
+  position: absolute;
+  top: 60%;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: #666;
+}
+
+.off {
+  background-color: #adb4a9;
+}
+.on {
+  background-color: #7D9029;
+}
+
+.primary {
+  display: inline-block;
+  font-weight: 600;
+  vertical-align: bottom;
+  margin-top: 12%;
+}
+
+.secondary {
+  vertical-align: top;
+  color: #444;
+  margin-top: 0;
+}

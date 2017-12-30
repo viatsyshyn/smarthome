@@ -1,0 +1,34 @@
+.battery {
+  display: inline-block;
+  font-size: 0;
+  vertical-align: middle;
+}
+
+span {
+  display: inline-block;
+  margin: 0;
+  background: #ccc;
+}
+
+.high {
+  background-color: #8bab00;
+}
+
+.low {
+  background-color: #ff3e11;
+  animation: low-blink-red 5s infinite ease-in-out;
+}
+
+.mid {
+  background-color: #ffb546;
+}
+
+
+@-webkit-keyframes low-blink-red {
+  0%, 94% {
+    background-color: #ff3e11;
+  }
+  95%, 100% {
+    background-color: #ccc;
+  }
+}

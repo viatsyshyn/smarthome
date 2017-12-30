@@ -1,0 +1,9 @@
+<div class="modal-overlay" [class.visible]="isOpen && !noOverlay" (click)="onClosed()"></div>
+<div [ngStyle]="{ 'margin-top': marginTop }" class="modal-window" [class.visible]="isOpen"
+  [class.activeModal]="isOpen" #modalWindow [class.call]="isCall">
+  <a href="javascript:" class="modal-close" (click)="onClosed()">Close</a>
+  <header *ngIf="title">{{title}}</header>
+  <div class="modal-content">
+    <ng-content></ng-content>
+  </div>
+</div>

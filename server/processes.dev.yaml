@@ -1,0 +1,25 @@
+apps:
+  - script   : ./dist/api.js
+    name     : 'api'
+    merge_logs: true
+    watch    :
+      - ./dist/api.js
+      - ./dist/lib/*
+      - ./dist/endpoints/*
+    cwd      : .
+    env      :
+      PORT: 3000
+      CACHE: redis://127.0.0.1
+      STORAGE: mongodb://127.0.0.1/demo2
+      PUBSUB: mqtt://127.0.0.1
+  - script   : ./dist/worker.js
+    name     : 'worker'
+    merge_logs: true
+    watch    :
+      - ./dist/worker.js
+      - ./dist/lib/*
+    cwd      : .
+    env      :
+      CACHE: redis://127.0.0.1
+      STORAGE: mongodb://127.0.0.1/demo2
+      PUBSUB: mqtt://127.0.0.1

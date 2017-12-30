@@ -1,0 +1,45 @@
+.zone-list, .devices-table {
+  width: 100%;
+}
+
+.device-list {
+
+  .item {
+    display: inline-block;
+    position: relative;
+    margin: 8px;
+    padding: 8px 8px 16px;
+    border: 1px solid #999;
+    box-shadow: 1px 1px 1px 2px rgba(127,127,127,.3);
+    width: 160px + 16px;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .mat-card-content {
+    height: 80px;
+    margin: 0 8px;
+    overflow: hidden;
+  }
+
+  .device-details {
+    display: block;
+    background: #c9d0c5;
+    border-radius: 5px;
+    height: 80px;
+    vertical-align: middle;
+    line-height: 80px;
+    text-align: center;
+    padding: 4px;
+    box-sizing: border-box;
+  }
+  .wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .mat-card-header-text {
+    margin: 0;
+  }
+}

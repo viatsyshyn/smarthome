@@ -1,0 +1,26 @@
+{
+  "name": "smarthome-sample-device",
+  "version": "0.0.1",
+  "description": "Smarthome Sample Device",
+  "main": "./dist/index.umd.js",
+  "license": "MIT",
+  "keywords": [
+    "smarthome-device"
+  ],
+  "author": "Volodymyr Iatsyshyn <viatsyshyn@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/viatsyshyn/HomeKit.git"
+  },
+  "homepage": "https://github.com/viatsyshyn/HomeKit#readme",
+  "scripts": {
+    "emu": "node ./device.js",
+    "tslint": "tslint"
+  },
+  "dependencies": {
+    "mqtt": "^2.15.0"
+  },
+  "devDependencies": {
+    "@types/node": "^8.0.0"
+  }
+}

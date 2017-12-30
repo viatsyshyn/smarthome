@@ -1,0 +1,21 @@
+<div class="battery"
+     [style.width.px]="totalWidth"
+     [style.height.px]="height"
+     [style.lineHeight.px]="height"
+>
+    <span *ngFor="let block of blocksIt"
+          [class.low]="value === 0 && block <= value"
+          [class.mid]="value === 1 && block <= value"
+          [class.high]="value === 2 && block <= value"
+          [style.height.px]="height"
+          [style.width.px]="width/(block === 2 && spacing === 0 ? 2 : 1)"
+          [style.marginLeft.px]="(block>0)?spacing:0"></span>
+
+    <span class="end" *ngIf="spacing === 0"
+          [class.high]="value === 2"
+          [style.marginTop.px]="height/4"
+          [style.marginBottom.px]="height/4"
+          [style.height.px]="height/2"
+          [style.width.px]="width/3"
+          [style.marginLeft.px]="(block>0)?spacing:0"></span>
+</div>

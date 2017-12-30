@@ -1,0 +1,101 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 9998;
+  background: rgba(94, 110, 141, 0.9);
+  display: none;
+
+  &.visible {
+    display: block;
+  }
+}
+
+.modal-window {
+  z-index: 9999;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+  background-color: #fff; 
+  width: 600px;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  margin-left: -300px;
+  display: none;
+  line-height: 22px;
+
+  &.visible {
+    display: block;
+  }
+
+  &.call {
+    top: auto;
+    right: 50px;
+    margin-left: auto;
+    width: 250px;
+    background: #8cb5ff;
+    padding: 10px;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+    bottom: 20px;
+    border-radius: 5px;
+  }
+
+  .modal-content {
+    padding: 2em;
+  }
+
+  header{
+    height: 70px;
+    line-height: 70px;
+    background-color: #f2f2f2;
+    padding: 0 1em;
+    color: #323d55;
+    font-weight: bold;
+  }
+}
+
+.modal-close {
+  position: absolute;
+	top: 10px;
+	right: 10px;
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+
+  transform: scale(1);
+  -webkit-transition: -webkit-transform .3s 0s, visibility 0s 0s;
+  -moz-transition: -moz-transform .3s 0s, visibility 0s 0s;
+  transition: transform .3s 0s, visibility 0s 0s;
+
+	/* image replacement */
+	overflow: hidden;
+	text-indent: 100%;
+	white-space: nowrap;
+
+	&::before, &::after {
+		/* close icon in css */
+    content: '';
+		position: absolute;
+		top: 12px;
+		left: 5px;
+		display: inline-block;
+		height: 4px;
+		width: 20px;
+		background: #47374e;
+		-webkit-backface-visibility: hidden;
+		backface-visibility: hidden;
+	}
+
+	&::before {
+		transform: rotate(45deg);
+	}
+
+	&::after {
+		transform: rotate(135deg);
+	}
+
+	&:hover {
+		transform: scale(1.2);
+	}
+}

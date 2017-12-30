@@ -1,0 +1,16 @@
+apps:
+  - script   : ./server/dist/api.js
+    name     : 'api'
+    instances: 1
+    cwd      : .
+    merge_logs: true
+    env      :
+      NODE_ENV: production
+      PORT: 3000
+  - script   : ./server/dist/worker.js
+    name     : 'worker'
+    instances: 1
+    cwd      : .
+    merge_logs: true
+    env      :
+      NODE_ENV: production

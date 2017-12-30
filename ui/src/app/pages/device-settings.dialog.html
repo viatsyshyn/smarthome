@@ -1,0 +1,112 @@
+<h1 mat-dialog-title>
+    <img [src]="data.manifest.icons['32']" width="32" height="32" />
+    Settings of {{model.title}}
+</h1>
+<div mat-dialog-content>
+    <ng-container *ngIf="reported.length > 0">
+        <mat-form-field class="example-full-width">
+            <input matInput placeholder="Friendly name"
+                   [(ngModel)]="model.title"
+                   [formControl]="deviceTitleFC"
+                   (change)="buildSaveModel()">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-select placeholder="Location" [(ngModel)]="model.zone">
+                <mat-option *ngFor="let zone of zones" [value]="zone">{{ zone }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-toolbar>
+            <span>Republish to zone</span>
+        </mat-toolbar>
+
+        <table class="mat-table" style="width: 100%; margin-top: 25px">
+            <tr class="mat-header-row">
+                <th class="mat-header-cell column-name">Name</th>
+                <th class="mat-header-cell column-value">Value</th>
+                <th class="mat-header-cell column-republish">Publish</th>
+                <th class="mat-header-cell column-mapping">To</th>
+            </tr>
+            <tr class="mat-row" *ngFor="let property of reported">
+                <td class="mat-cell">{{property.title}}</td>
+                <td class="mat-cell column-centered" [ngSwitch]="getPropControl(property)">
+                    <shc-battery-level [value]="property.value"
+                                       [height]="18"
+                                       [width]="9"
+                                       *ngSwitchCase="'battery'"></shc-battery-level>
+                    <shc-time-since
+                            [timestamp]="property.value"
+                            *ngSwitchCase="'timestamp'"></shc-time-since>
+
+                    <shc-value-scale [value]="property.value"
+                                     [scale]="property.scale"
+                                     [precision]="(property.precision || 0) + 1"
+                                     [sign]="true"
+                                     *ngSwitchDefault></shc-value-scale>
+                </td>
+                <td class="mat-cell column-centered">
+                    <mat-checkbox [(ngModel)]="property.republish" (change)="buildSaveModel()"></mat-checkbox>
+                </td>
+                <td class="mat-cell">
+                    <mat-form-field class="example-full-width">
+                        <input matInput placeholder=""
+                               [(ngModel)]="property.mapping"
+                               [formControl]="property.formControl"
+                               disable-tracker
+                               [disable]="!property.republish"
+                               (change)="buildSaveModel()">
+                    </mat-form-field></td>
+            </tr>
+        </table>
+    </ng-container>
+    <ng-container *ngIf="desired.length > 0">
+        <mat-toolbar>
+            <span>Listen from zone</span>
+        </mat-toolbar>
+        <table class="mat-table" style="width: 100%; margin-top: 25px">
+            <tr class="mat-header-row">
+                <th class="mat-header-cell column-name">Name</th>
+                <th class="mat-header-cell column-value">Value</th>
+                <th class="mat-header-cell column-republish">Listen</th>
+                <th class="mat-header-cell column-mapping">From</th>
+            </tr>
+            <tr class="mat-row" *ngFor="let property of desired">
+                <td class="mat-cell">{{property.title}}</td>
+                <td class="mat-cell column-centered" [ngSwitch]="getPropControl(property)">
+                    <shc-battery-level [value]="property.value"
+                                       [height]="18"
+                                       [width]="9"
+                                       *ngSwitchCase="'battery'"></shc-battery-level>
+                    <shc-time-since
+                            [timestamp]="property.value"
+                            *ngSwitchCase="'timestamp'"></shc-time-since>
+
+                    <shc-value-scale [value]="property.value"
+                                     [scale]="property.scale"
+                                     [precision]="1"
+                                     [sign]="true"
+                                     *ngSwitchDefault></shc-value-scale>
+                </td>
+                <td class="mat-cell column-centered">
+                    <mat-checkbox [(ngModel)]="property.republish" (change)="buildSaveModel()"></mat-checkbox>
+                </td>
+                <td class="mat-cell">
+                    <mat-form-field class="example-full-width">
+                        <input matInput placeholder=""
+                               [(ngModel)]="property.mapping"
+                               [formControl]="property.formControl"
+                               disable-tracker
+                               [disable]="!property.republish"
+                               (change)="buildSaveModel()">
+                    </mat-form-field>
+                </td>
+            </tr>
+        </table>
+    </ng-container>
+</div>
+<div mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="model" tabindex="2">Save</button>
+    <button mat-button (click)="onNoClick()" tabindex="-1">No Thanks</button>
+    <button mat-button [mat-dialog-close]="null" tabindex="-1">Forget</button>
+</div>

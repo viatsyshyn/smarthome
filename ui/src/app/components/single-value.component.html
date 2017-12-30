@@ -1,0 +1,10 @@
+<div class="single-value"
+     [class.on]="active === true || active === 1"
+     [class.off]="active === false || active === 0"
+     [style.width.px]="width"
+     [style.lineHeight.px]="width"
+     [style.height.px]="height"
+     [style.borderRadius.px]="borderRadius"
+>
+    <ng-content></ng-content>
+</div>

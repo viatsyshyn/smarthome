@@ -1,0 +1,10 @@
+<div class="icon-device"
+     [class.on]="active === true"
+     [class.off]="active === false"
+>
+    <ng-content></ng-content>
+    <div class="battery-level" *ngIf="batteryLevel !== null">
+        <shc-battery-level [value]="batteryLevel" [width]="3" [height]="5"></shc-battery-level>
+    </div>
+    <shc-time-since class="since-active" [timestamp]="lastUpdated" [minScale]="'m'"></shc-time-since>
+</div>

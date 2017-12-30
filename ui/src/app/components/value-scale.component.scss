@@ -1,0 +1,42 @@
+.value-scale {
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: middle;
+}
+.with-scale {
+  margin-top: -12.5%;
+  margin-right: -4px;
+}
+
+.ryg, .bit {
+  display: inline-block;
+  border-radius: 50%;
+  min-height: 18px;
+  width: 18px;
+  vertical-align: middle;
+  text-align: center;
+  color: white;
+  font-size: 11px;
+  line-height: 18px;
+  background-color: #7f7f7f;
+}
+
+.ryg.red { background-color: #f93e3e; }
+.ryg.yellow { background-color: #ffc520; }
+.ryg.green,
+.bit.on { background-color: #006600; }
+.bit.off { background-color: #7d8492; }
+
+sup {
+  font-size: 60%;
+  font-weight: 300;
+  letter-spacing: -1px;
+}
+
+.sup {
+  font-size: 70%;
+  display: inline-block;
+  letter-spacing: -1px;
+  margin-right: 1px;
+  font-weight: 300;
+}

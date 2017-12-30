@@ -1,0 +1,34 @@
+{
+  "name": "smarthome-kit",
+  "version": "0.0.1",
+  "description": "SmartHome Kit",
+  "main": "index.js",
+  "scripts": {
+    "start": "pm2 start process.yaml"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/viatsyshyn/Home-KIT.git"
+  },
+  "author": "Volodymyr Iatsyshyn <viatsyshyn@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/viatsyshyn/Home-KIT/issues"
+  },
+  "homepage": "https://github.com/viatsyshyn/Home-KIT#readme",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "dateformat": "^2.0.0",
+    "express": "^4.15.2",
+    "express-history-api-fallback": "^2.2.1",
+    "express-session": "^1.14.1",
+    "lodash": "^4.17.4",
+    "method-override": "^2.3.7",
+    "mongodb": "^2.2.22",
+    "mqtt": "^2.3.0",
+    "redis": "^2.7.0"
+  },
+  "devDependencies": {
+    "pm2": "^2.7.2"
+  }
+}

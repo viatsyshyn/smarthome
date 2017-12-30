@@ -1,0 +1,47 @@
+<mat-toolbar>
+    <span>Zones</span>
+</mat-toolbar>
+
+<mat-form-field class="zone-list">
+    <mat-chip-list #chipList>
+        <mat-chip *ngFor="let zone of zones" [selectable]="true"
+                  [removable]="true" (remove)="removeZone(zone)">
+            {{zone.zone}}
+            <mat-icon matChipRemove>drop</mat-icon>
+        </mat-chip>
+
+        <input placeholder=""
+               [matChipInputFor]="chipList"
+               [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+               [matChipInputAddOnBlur]="true"
+               (matChipInputTokenEnd)="addZone($event)" />
+    </mat-chip-list>
+</mat-form-field>
+
+<mat-toolbar>
+    <span>Devices</span>
+</mat-toolbar>
+
+<div class="device-list">
+    <mat-card class="item" *ngFor="let device of devices">
+        <mat-card-header>
+            <mat-card-title>
+                <img [src]="device.manifest.icons['16']" width="16" height="16" />
+                {{ device.title }}
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="device-details">
+                <div class="wrapper">
+                    <shc-icon-device [active]="device.initialized" [lastUpdated]="device.lastUpdated">
+                        <shc-scale-set [scales]="device.scales"></shc-scale-set>
+                    </shc-icon-device>
+                </div>
+            </div>
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-button (click)="configureDevice(device)">SETTINGS</button>
+            <button mat-button (click)="deviceStats(device)">STATS</button>
+        </mat-card-actions>
+    </mat-card>
+</div>

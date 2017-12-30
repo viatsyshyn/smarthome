@@ -1,0 +1,13 @@
+<header class="cd-auto-hide-header" #header>
+  <div class="logo">
+    <a href="/"><img src="/static/logo-tiny.png" alt="Logo"></a>
+  </div>
+
+  <nav class="cd-primary-nav">
+    <ul id="cd-navigation">
+      <li><a (click)="logout()" href="javascript:">Logout</a></li>
+    </ul>
+  </nav>
+
+  <ng-content></ng-content>
+</header>

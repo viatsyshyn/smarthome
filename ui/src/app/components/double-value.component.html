@@ -1,0 +1,18 @@
+<div class="double-value"
+     [class.on]="active === true || active === 1"
+     [class.off]="active === false || active === 0"
+     [style.width.px]="width"
+     [style.height.px]="height"
+     [style.borderRadius.px]="borderRadius"
+>
+    <div class="primary"
+         [style.lineHeight.px]="width * 0.5"
+         [style.fontSize.px]="width * 0.4">
+        <ng-content></ng-content>
+    </div>
+    <div class="secondary"
+         [style.lineHeight.px]="width * 0.25"
+         [style.fontSize.px]="width * 0.22">
+        <ng-content select="[secondary]"></ng-content>
+    </div>
+</div>
