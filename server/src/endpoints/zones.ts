@@ -21,7 +21,7 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: zones list
    */
-  app.get('/zones', async_wrapper(async () => {
+  app.get('/zones', async_wrapper(logger, async () => {
     return await storage.get('*', 'zones') || [];
   }));
 
@@ -62,7 +62,7 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: zones list
    */
-  app.put('/zone/:zone', async_wrapper(async req => {
+  app.put('/zone/:zone', async_wrapper(logger, async req => {
     const zone = req.params.zone;
 
     if (!zone) {
@@ -96,7 +96,7 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: zones list
    */
-  app.delete('/zone/:zone', async_wrapper(async req => {
+  app.delete('/zone/:zone', async_wrapper(logger, async req => {
     // TODO: change to native mongodb remove
 
     let zones = await storage.get<string[]>('*', 'zones') || [];

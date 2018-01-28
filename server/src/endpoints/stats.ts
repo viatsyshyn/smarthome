@@ -47,7 +47,7 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: device stats
    */
-  app.get('/history/:device', async_wrapper(async (req) => {
+  app.get('/history/:device', async_wrapper(logger, async (req) => {
     const device = req.params.device;
     const property = req.params.property || undefined;
     const since = new Date(req.query.since);
@@ -57,7 +57,7 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
     return await storage.stats(device, property, since, till, interval, manifest.mqtt.out);
   }));
 
-  app.get('/history/:device/:property', async_wrapper(async (req) => {
+  app.get('/history/:device/:property', async_wrapper(logger, async (req) => {
     const device = req.params.device;
     const property = req.params.property || undefined;
     const since = new Date(req.query.since);

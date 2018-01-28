@@ -34,7 +34,7 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: ufo devices list
    */
-  app.get('/cached/:device/:key', async_wrapper((req) => {
+  app.get('/cached/:device/:key', async_wrapper(logger, (req) => {
     let device = req.params.device;
     let key = req.params.key;
     return cache.get(`${device}::${key}`);
@@ -61,7 +61,7 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: vale
    */
-  app.get('/storage/:device', async_wrapper((req) => {
+  app.get('/storage/:device', async_wrapper(logger, (req) => {
     let device = req.params.device;
     return storage.all(device);
   }));
@@ -92,7 +92,7 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: vale
    */
-  app.get('/storage/:device/:key', async_wrapper((req) => {
+  app.get('/storage/:device/:key', async_wrapper(logger, (req) => {
     let device = req.params.device;
     let key = req.params.key;
     return storage.get(device, key);
@@ -129,7 +129,7 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: value
    */
-  app.put('/storage/:device/:key', async_wrapper((req) => {
+  app.put('/storage/:device/:key', async_wrapper(logger, (req) => {
     let device = req.params.device;
     let key = req.params.key;
     console.log('SET:', device, key, req.body);

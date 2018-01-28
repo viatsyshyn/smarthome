@@ -21,8 +21,10 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: devices settings list
    */
-  app.get('/devices', async_wrapper(async () => {
-    let devices = (await storage.query(undefined, 'manifest')).map(x => x.device);
+  app.get('/devices', async_wrapper(logger, async () => {
+    let devices = (await storage.query(undefined, 'manifest'))
+      .filter(x => x.data != null)
+      .map(x => x.device);
 
     let settings: IDeviceSetting[][] = await Promise.all(
       devices.map(device => storage.query(device, undefined))
@@ -48,7 +50,7 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
 
   /**
    * @swagger
-   * /devices/{device}:
+   * /device/{device}:
    *   patch:
    *     tags:
    *         - Devices
@@ -73,7 +75,7 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: ufo devices list
    */
-  app.patch('/device/:device', async_wrapper(async req => {
+  app.patch('/device/:device', async_wrapper(logger, async req => {
     let device = req.params.device;
     await Promise.all([
       storage.set(device, 'zone', req.body.zone),
@@ -84,7 +86,7 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
 
   /**
    * @swagger
-   * /devices/{device}:
+   * /device/{device}:
    *   delete:
    *     tags:
    *         - Devices
@@ -103,11 +105,11 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: ufo devices list
    */
-  app.delete('/devices/:device', async_wrapper(async req => {
+  app.delete('/device/:device', async_wrapper(logger, async req => {
     let device = req.params.device;
     await Promise.all([
       storage.set(device, 'zone', undefined),
-      storage.set(device, 'package', undefined)
+      storage.set(device, 'manifest', undefined)
     ]);
 
     pubsub.pub('_server/device-forget', device);

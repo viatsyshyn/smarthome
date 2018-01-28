@@ -34,7 +34,11 @@ export class PubSub {
     this.mqtt
       .on('message', (t, m) => {
         if (regex.exec(t)) {
-          cb(JSON.parse(m.toString()), t);
+          try {
+            cb(JSON.parse(m.toString()), t);
+          } catch (e) {
+            // ignore
+          }
         }
       });
     return this;
