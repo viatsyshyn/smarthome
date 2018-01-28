@@ -20,7 +20,7 @@ export class ValueScaleComponent {
     }
 
     switch (this.scale) {
-      case 'bit': value = value === 1 || value === true ? 'on' : 'off'; break;
+      case 'bit': value = value === 1 || value === true || value === '1' ? 'on' : 'off'; break;
       case 'RYG': value = value === 2 ? 'H' : value === 1 ? 'M' : 'L' ; break;
     }
 

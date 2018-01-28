@@ -5,8 +5,8 @@
       [class.yellow]="this.scale === 'RYG' && this.value === 1"
       [class.green]="this.scale === 'RYG' && this.value === 2"
       [class.bit]="this.scale === 'bit'"
-      [class.off]="this.scale === 'bit' && (this.value === 0 || this.value === false)"
-      [class.on]="this.scale === 'bit' && (this.value === 1 || this.value === true)"
+      [class.off]="this.scale === 'bit' && (this.value === 0 || this.value === false || this.value === '0')"
+      [class.on]="this.scale === 'bit' && (this.value === 1 || this.value === true || this.value === '1')"
 >
     {{ getRound() }}<span class="sup" *ngIf="hasFraction()"
     >{{ getFraction() }}</span><sup *ngIf="hasScale()"

@@ -1,5 +1,5 @@
 <h1 mat-dialog-title>
-    <img [src]="data.manifest.icons['32']" width="32" height="32" />
+    <img [src]="data.manifest.icons['24']" width="32" height="32" />
     Settings of {{model.title}}
 </h1>
 <div mat-dialog-content>
@@ -18,7 +18,7 @@
         </mat-form-field>
 
         <mat-toolbar>
-            <span>Republish to zone</span>
+            <span>Output</span>
         </mat-toolbar>
 
         <table class="mat-table" style="width: 100%; margin-top: 25px">
@@ -26,7 +26,7 @@
                 <th class="mat-header-cell column-name">Name</th>
                 <th class="mat-header-cell column-value">Value</th>
                 <th class="mat-header-cell column-republish">Publish</th>
-                <th class="mat-header-cell column-mapping">To</th>
+                <th class="mat-header-cell column-mapping">As</th>
             </tr>
             <tr class="mat-row" *ngFor="let property of reported">
                 <td class="mat-cell">{{property.title}}</td>
@@ -62,14 +62,14 @@
     </ng-container>
     <ng-container *ngIf="desired.length > 0">
         <mat-toolbar>
-            <span>Listen from zone</span>
+            <span>Input</span>
         </mat-toolbar>
         <table class="mat-table" style="width: 100%; margin-top: 25px">
             <tr class="mat-header-row">
                 <th class="mat-header-cell column-name">Name</th>
                 <th class="mat-header-cell column-value">Value</th>
-                <th class="mat-header-cell column-republish">Listen</th>
-                <th class="mat-header-cell column-mapping">From</th>
+                <th class="mat-header-cell column-republish">Action</th>
+                <th class="mat-header-cell column-mapping"></th>
             </tr>
             <tr class="mat-row" *ngFor="let property of desired">
                 <td class="mat-cell">{{property.title}}</td>
@@ -89,15 +89,45 @@
                                      *ngSwitchDefault></shc-value-scale>
                 </td>
                 <td class="mat-cell column-centered">
-                    <mat-checkbox [(ngModel)]="property.republish" (change)="buildSaveModel()"></mat-checkbox>
+                    <mat-select placeholder="Action" [(ngModel)]="property.mode" (change)="buildSaveModel()">
+                        <mat-option [value]="0">None</mat-option>
+                        <mat-option [value]="1">Value</mat-option>
+                        <mat-option [value]="2">Listen</mat-option>
+                        <mat-option [value]="3">Schedule</mat-option>
+                    </mat-select>
                 </td>
                 <td class="mat-cell">
-                    <mat-form-field class="example-full-width">
+                    <mat-form-field class="example-full-width"
+                                    [class.hidden]="property.mode !== 0">
+                        <input matInput placeholder=""
+                               disable-tracker
+                               [disabled]="true">
+                    </mat-form-field>
+                    <mat-form-field class="example-full-width"
+                                    [class.hidden]="property.mode !== 1">
+                        <input matInput placeholder=""
+                               [(ngModel)]="property.value"
+                               disable-tracker
+                               [disabled]="property.mode !== 1"
+                               [formControl]="property.formValueControl"
+                               (change)="buildSaveModel()">
+                    </mat-form-field>
+                    <mat-form-field class="example-full-width"
+                                    [class.hidden]="property.mode !== 2">
                         <input matInput placeholder=""
                                [(ngModel)]="property.mapping"
-                               [formControl]="property.formControl"
                                disable-tracker
-                               [disable]="!property.republish"
+                               [disabled]="property.mode !== 2"
+                               [formControl]="property.formListenControl"
+                               (change)="buildSaveModel()">
+                    </mat-form-field>
+                    <mat-form-field class="example-full-width"
+                                    [class.hidden]="property.mode !== 3">
+                        <input matInput placeholder=""
+                               [(ngModel)]="property.schedule"
+                               disable-tracker
+                               [disabled]="property.mode !== 3"
+                               [formControl]="property.formScheduleControl"
                                (change)="buildSaveModel()">
                     </mat-form-field>
                 </td>

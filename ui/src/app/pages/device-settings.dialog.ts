@@ -8,11 +8,21 @@ import {MqttService} from '../services/mqtt.service';
 import {BaseComponent} from '../lib/base.component';
 import {ZoneService} from '../services/zone.service';
 
-interface IDevicePropertyExt extends IDevicePropertyBase {
+interface IDevicePropertyOutExt extends IDevicePropertyBase {
   republish?: boolean;
   mapping?: string;
   value?: any;
   formControl?: FormControl;
+}
+
+interface IDevicePropertyInExt extends IDevicePropertyBase {
+  mode?: 0 | 1 | 2 | 3;
+  mapping?: string;
+  schedule?: string;
+  value?: any;
+  formValueControl?: FormControl;
+  formListenControl?: FormControl;
+  formScheduleControl?: FormControl;
 }
 
 @Component({
@@ -22,15 +32,17 @@ interface IDevicePropertyExt extends IDevicePropertyBase {
 })
 export class DeviceSettingsDialog extends BaseComponent implements OnInit {
 
-  public reported: IDevicePropertyExt[] = [];
-  public desired: IDevicePropertyExt[] = [];
+  public reported: IDevicePropertyOutExt[] = [];
+  public desired: IDevicePropertyInExt[] = [];
   public zones: string[];
 
   public model = {
     title: '',
     zone: '',
     republish: {},
-    listen: {}
+    listen: {},
+    schedule: {},
+    values: {}
   };
 
   deviceTitleFC = new FormControl('', [Validators.required]);
@@ -48,7 +60,7 @@ export class DeviceSettingsDialog extends BaseComponent implements OnInit {
       .on(`${data.device}/reported/+`)
       .subscribe(([topic, reported]) => {
         let [, , property] = topic.split('/');
-        this.reported.forEach((prop: IDevicePropertyExt) => {
+        this.reported.forEach((prop: IDevicePropertyOutExt) => {
           if (prop.name === property) {
             prop.value = reported;
           }
@@ -57,8 +69,9 @@ export class DeviceSettingsDialog extends BaseComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    let [repub, listen, title, zone, zones] = await Promise.all([
+    let [repub, schedule, listen, title, zone, zones] = await Promise.all([
       this.storageService.get(this.data.device, 'republish'),
+      this.storageService.get(this.data.device, 'schedule'),
       this.storageService.get(this.data.device, 'listen'),
       this.storageService.get<string>(this.data.device, 'title'),
       this.storageService.get<string>(this.data.device, 'zone'),
@@ -78,7 +91,8 @@ export class DeviceSettingsDialog extends BaseComponent implements OnInit {
     valuesP.push(Promise.resolve(null));
 
     let values = await Promise.all(valuesP);
-    this.reported = metadata.mqtt.out.map((x, index) => (<IDevicePropertyExt>{
+    values[-1] = null;
+    this.reported = metadata.mqtt.out.map((x, index) => (<IDevicePropertyOutExt>{
       ...x,
       republish: repub.hasOwnProperty(x.name),
       mapping: repub[x.name] || x.name,
@@ -86,25 +100,43 @@ export class DeviceSettingsDialog extends BaseComponent implements OnInit {
       formControl: new FormControl('', [Validators.required])
     }));
 
-    this.desired = metadata.mqtt.in.map(x => (<IDevicePropertyExt>{
+    this.desired = metadata.mqtt.in.map(x => (<IDevicePropertyInExt>{
       ...x,
-      republish: listen.hasOwnProperty(x.name),
+      mode: listen.hasOwnProperty(x.name) ? 2 : schedule.hasOwnProperty(x.name) ? 3 : 0,
       mapping: listen[x.name] || x.name,
-      formControl: new FormControl('', [Validators.required])
+      schedule: schedule[x.name] || '{}',
+      value: values[metadata.mqtt.out.findIndex(y => y.name === x.name)],
+      formValueControl: new FormControl('', [Validators.required]),
+      formListenControl: new FormControl('', [Validators.required]),
+      formScheduleControl: new FormControl('', [Validators.required])
     }));
   }
 
   buildSaveModel(): void {
-    this.model.republish = this.reported.reduce((a, x: IDevicePropertyExt) => {
+    this.model.republish = this.reported.reduce((a, x: IDevicePropertyOutExt) => {
       if (x.republish) {
         a[x.name] = x.mapping;
       }
       return a;
     }, {});
 
-    this.model.listen = this.desired.reduce((a, x: IDevicePropertyExt) => {
-      if (x.republish) {
+    this.model.values = this.desired.reduce((a, x: IDevicePropertyInExt) => {
+      if (x.mode === 1) {
+        a[x.name] = x.value === String(parseFloat(x.value)) ? parseFloat(x.value) : x.value;
+      }
+      return a;
+    }, {});
+
+    this.model.listen = this.desired.reduce((a, x: IDevicePropertyInExt) => {
+      if (x.mode === 2) {
         a[x.name] = x.mapping;
+      }
+      return a;
+    }, {});
+
+    this.model.schedule = this.desired.reduce((a, x: IDevicePropertyInExt) => {
+      if (x.mode === 3) {
+        a[x.name] = x.schedule;
       }
       return a;
     }, {});

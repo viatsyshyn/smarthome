@@ -99,7 +99,12 @@ export class DevicesComponent extends BaseDevicesComponent {
       this.storageService.set(device.device, 'title', results.title);
       this.storageService.set(device.device, 'republish', results.republish);
       this.storageService.set(device.device, 'listen', results.listen);
+      this.storageService.set(device.device, 'schedule', results.schedule);
       this.storageService.set(device.device, 'zone', results.zone);
+
+      Object.keys(results.values).forEach(key => {
+        this.mqttService.pub(`${device.device}/desired/${key}`, results.values[key]);
+      });
     })
   }
 
