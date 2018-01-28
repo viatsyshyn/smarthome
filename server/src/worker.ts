@@ -2,6 +2,7 @@ import {LoggerFactory} from './services/logger';
 import cache from './services/cache';
 import storage, {IDeviceSetting, ITimestamped} from './services/storage';
 import pubsub from './services/pubsub';
+const parser = require('cron-parser');
 
 const _eval = require('node-eval');
 
@@ -145,6 +146,61 @@ async function main() {
         }
       }));
   });
+
+  function parseIfString(x: any): any {
+    return typeof x === 'string' ? JSON.parse(x) : x;
+  }
+
+  let lastScheduleTick = await cache.get(`scheduler::last-tick`) || (new Date().getTime() - 4 * 3600 * 1000);
+  setInterval(async () => {
+    const thisScheduleTick = new Date().getTime() - 1;
+    const cronOptions = {
+      currentDate: new Date(thisScheduleTick),
+      tz: 'Europe/Kiev'
+    };
+    const schedules = await storage.query(undefined, 'schedule');
+
+    let queue: {
+      timestamp: number;
+      device: string;
+      property: string;
+      value: any;
+    }[] = [];
+
+    schedules.forEach((setting) => {
+      const deviceSchedule = parseIfString(setting.data);
+
+      Object.keys(deviceSchedule).forEach((property: string) => {
+        const propertySchedule = parseIfString(deviceSchedule[property]);
+
+        Object.keys(propertySchedule).forEach((timer: string) => {
+
+          const interval = parser.parseExpression(timer, cronOptions);
+          const value = propertySchedule[timer];
+
+          queue.push({
+            timestamp: interval.prev().getTime(),
+            device: setting.device,
+            property,
+            value
+          });
+        });
+      });
+    });
+
+    queue = queue.filter(x => x.timestamp >= lastScheduleTick);
+    queue.sort((_1, _2) => _1.timestamp - _2.timestamp);
+
+    logger.info(`processing ${queue.length} events since ${new Date(lastScheduleTick)}`);
+
+    queue
+      .forEach(item => {
+        pubsub.pub(`${item.device}/desired/${item.property}`, item.value);
+      });
+
+    lastScheduleTick = thisScheduleTick;
+    await cache.set(`scheduler::last-tick`, lastScheduleTick);
+  }, 15000); // each 15 sec
 
   logger.info('Initialized');
 }

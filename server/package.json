@@ -20,8 +20,6 @@
     "gulp-sourcemaps": "^2.6.1",
     "gulp-tslint": "^8.1.2",
     "gulp-typescript": "^3.2.3",
-    "mqtt-regex": "^1.0.5",
-    "node-eval": "^2.0.0",
     "pm2": "^2.2.3",
     "swagger-express": "^1.0.5",
     "swagger-jsdoc": "^1.9.7",

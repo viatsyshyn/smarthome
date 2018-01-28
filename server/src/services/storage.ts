@@ -74,7 +74,7 @@ export class Storage {
     return data ? data.data : null;
   }
 
-  async query<T>(device: string | undefined, key: string | undefined): Promise<IDeviceSetting<T>[]> {
+  async query<T = any>(device: string | undefined, key: string | undefined): Promise<IDeviceSetting<T>[]> {
     let results = await this.db
       .collection(SETTINGS)
       .find(query({device, key}))
