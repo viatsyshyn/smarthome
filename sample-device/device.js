@@ -4,7 +4,7 @@ let mqtt = require('mqtt');
 async function main() {
   let device_id = process.argv[2] || 'sample-device';
   let mqtt_host = process.argv[3] || 'mqtt://127.0.0.1:1883';
-  let manifest = require('./manifest.json');
+  let manifest = require('./data/manifest.json');
 
   logger.log(`Initialize ${device_id} @ ${mqtt_host}`);
 
@@ -30,7 +30,7 @@ async function main() {
     .on('message', (topic, message) => {
       logger.info('IN: ', topic, message.toString());
 
-      manifest.mqtt.in.forEach(p => {
+      manifest.mqtt.in.forEach(({name: p}) => {
         if (topic === `${device_id}/desired/${p}` && manifest.mqtt.out.some(x => x.name === p)) {
           client.publish(`${device_id}/reported/${p}`, message);
         }
@@ -39,7 +39,7 @@ async function main() {
 
   function sendValues() {
     manifest.mqtt.out.forEach((prop) => {
-      if (!prop.monotone && Math.random() > .9) {
+      if (!prop.monotone && Math.random() > .1) {
         return;
       }
 

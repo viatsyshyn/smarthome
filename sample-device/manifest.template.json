@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "device": "Sample Device",
+  "description": "Just in case we ever will need this",
+  "icons": {
+  },
+  "mqtt": {
+    "idlePeriodSec": 300,
+    "out": [
+      {
+        "name": "temperature",
+        "title": "Temperature",
+        "scale": "C",
+        "precision": 0,
+        "monotone": true,
+        "expectedMin": 15,
+        "expectedMax": 30
+      },
+      {
+        "name": "humidity",
+        "title": "Humidity",
+        "scale": "RH",
+        "precision": 0,
+        "monotone": true,
+        "expectedMin": 30,
+        "expectedMax": 90
+      },
+      {
+        "name": "active",
+        "title": "On/Off",
+        "scale": "bit",
+        "expectedMin": 0,
+        "expectedMax": 1,
+        "lambda": "{{active.lambda}}"
+      }
+    ],
+    "in": [
+      {
+        "name": "active",
+        "title": "On/Off",
+        "scale": "bit"
+      }
+    ]
+  },
+  "ui": {
+    "icon": [{
+      "prime": "temperature",
+      "secondary": "humidity",
+      "state": "active"
+    }],
+    "devices": [{
+      "prime": "temperature",
+      "secondary": {
+        "name": "t_delta",
+        "title": "Temperature Delta",
+        "scale": "C",
+        "precision": 2,
+        "sign": true,
+        "lambda": "{{t_delta.lambda}}"
+      }
+    }, {
+      "prime": "humidity",
+      "secondary": {
+        "name": "h_delta",
+        "title": "Humidity Delta",
+        "scale": "RH",
+        "precision": 1,
+        "sign": true,
+        "lambda": "{{h_delta.lambda}}"
+      }
+    }, {
+      "prime": "active",
+      "secondary": {
+        "name": "active_since",
+        "title": "Last State change",
+        "scale": "timestamp",
+        "lambda": "{{active_since.lambda}}"
+      }
+    }]
+  }
+}

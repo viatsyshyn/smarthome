@@ -15,12 +15,18 @@
   "homepage": "https://github.com/viatsyshyn/HomeKit#readme",
   "scripts": {
     "emu": "node ./device.js",
-    "tslint": "tslint"
+    "tslint": "tslint",
+    "build": "npm run build:manifest",
+    "clean:all": "rimraf data",
+    "build:manifest": "node ./manifest.build.js"
   },
   "dependencies": {
     "mqtt": "^2.15.0"
   },
   "devDependencies": {
-    "@types/node": "^8.0.0"
+    "@types/node": "^8.0.0",
+    "base64-img": "^1.0.3",
+    "concurrently": "^3.4.0",
+    "rimraf": "^2.6.2"
   }
 }
