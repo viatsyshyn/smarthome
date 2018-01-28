@@ -18,6 +18,7 @@
   "homepage": "https://github.com/viatsyshyn/Home-KIT#readme",
   "dependencies": {
     "body-parser": "^1.17.1",
+    "cron-parser": "^2.4.4",
     "dateformat": "^2.0.0",
     "express": "^4.15.2",
     "express-history-api-fallback": "^2.2.1",
@@ -26,9 +27,13 @@
     "method-override": "^2.3.7",
     "mongodb": "^2.2.22",
     "mqtt": "^2.3.0",
+    "mqtt-regex": "^1.0.5",
+    "node-eval": "^2.0.0",
     "redis": "^2.7.0"
   },
   "devDependencies": {
-    "pm2": "^2.7.2"
+    "base64-img": "^1.0.3",
+    "pm2": "^2.7.2",
+    "rimraf": "^2.6.2"
   }
 }

@@ -7,6 +7,9 @@ apps:
     env      :
       NODE_ENV: production
       PORT: 3000
+      CACHE: redis://127.0.0.1
+      STORAGE: mongodb://127.0.0.1/smarthome
+      PUBSUB: mqtt://127.0.0.1
   - script   : ./server/dist/worker.js
     name     : 'worker'
     instances: 1
@@ -14,3 +17,15 @@ apps:
     merge_logs: true
     env      :
       NODE_ENV: production
+      CACHE: redis://127.0.0.1
+      STORAGE: mongodb://127.0.0.1/smarthome
+      PUBSUB: mqtt://127.0.0.1
+
+  - script   : ./ui/dist/server.js
+    name     : 'ui'
+    instances: 1
+    cwd      : .
+    merge_logs: true
+    env      :
+      NODE_ENV: production
+      PORT: 3001
