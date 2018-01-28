@@ -1,3 +1,5 @@
 .idea
 node_modules
 **/dist
+
+sample-device/data/manifest.json
