@@ -1,63 +1,86 @@
 <ng-container *ngFor="let scale of scales">
-    <shc-single-value *ngIf="scale.secondary === undefined" [active]="scale.state ? scale.state.value : undefined">
+    <shc-single-value *ngIf="scale.secondary === undefined" [active]="scale.state ? scale.state.value : undefined" [ngSwitch]="scale.prime.scale">
         <shc-value-scale
-                *ngIf="scale.prime.scale !== 'battery' && scale.prime.scale !== 'timestamp'"
+                *ngSwitchDefault
                 [precision]="scale.prime.precision"
                 [scale]="scale.prime.scale"
                 [sign]="scale.prime.sign"
                 [value]="scale.prime.value"
         ></shc-value-scale>
         <shc-battery-level
-                *ngIf="scale.prime.scale === 'battery'"
+                *ngSwitchCase="'battery'"
                 [width]="9"
                 [height]="18"
                 [spacing]="0"
                 [value]="scale.prime.value"
         ></shc-battery-level>
         <shc-time-since
-                *ngIf="scale.prime.scale === 'timestamp'"
+                *ngSwitchCase="'timestamp'"
                 [timestamp]="scale.prime.value"
                 minScale="m"
-        ></shc-time-since>
+        ></shc-time-since
+        ><img
+                *ngSwitchCase="'icon'"
+                [width]="24"
+                [height]="24"
+                [src]="manifest.icons[scale.prime.value]"
+                style="position: relative;top:3px"
+                />
     </shc-single-value>
     <shc-double-value *ngIf="scale.secondary !== undefined" [active]="scale.state ? scale.state.value : undefined">
-        <shc-value-scale
-                *ngIf="scale.prime.scale !== 'battery' && scale.prime.scale !== 'timestamp'"
-                [precision]="scale.prime.precision"
-                [scale]="scale.prime.scale"
-                [sign]="scale.prime.sign"
-                [value]="scale.prime.value"
-        ></shc-value-scale>
-        <shc-battery-level
-                *ngIf="scale.prime.scale === 'battery'"
-                [width]="5"
-                [height]="8"
-                [spacing]="0"
-                [value]="scale.prime.value"
-        ></shc-battery-level>
-        <shc-time-since
-                *ngIf="scale.prime.scale === 'timestamp'"
-                [timestamp]="scale.prime.value"
-                minScale="m"
-        ></shc-time-since>
-        <shc-value-scale secondary
-                *ngIf="scale.secondary.scale !== 'battery' && scale.secondary.scale !== 'timestamp'"
-                [precision]="scale.secondary.precision"
-                [scale]="scale.secondary.scale"
-                [sign]="scale.secondary.sign"
-                [value]="scale.secondary.value"
-        ></shc-value-scale>
-        <shc-battery-level secondary
-                *ngIf="scale.secondary.scale === 'battery'"
-                [width]="4"
-                [height]="7"
-                [spacing]="0"
-                [value]="scale.secondary.value"
-        ></shc-battery-level>
-        <shc-time-since secondary
-                *ngIf="scale.secondary.scale === 'timestamp'"
-                [timestamp]="scale.secondary.value"
-                minScale="m"
-        ></shc-time-since>
+        <ng-container [ngSwitch]="scale.prime.scale">
+            <shc-value-scale
+                    *ngSwitchDefault
+                    [precision]="scale.prime.precision"
+                    [scale]="scale.prime.scale"
+                    [sign]="scale.prime.sign"
+                    [value]="scale.prime.value"
+            ></shc-value-scale>
+            <shc-battery-level
+                    *ngSwitchCase="'battery'"
+                    [width]="5"
+                    [height]="8"
+                    [spacing]="0"
+                    [value]="scale.prime.value"
+            ></shc-battery-level>
+            <shc-time-since
+                    *ngSwitchCase="'timestamp'"
+                    [timestamp]="scale.prime.value"
+                    minScale="m"
+            ></shc-time-since
+            ><img
+                    *ngSwitchCase="'icon'"
+                    [width]="16"
+                    [height]="16"
+                    [src]="manifest.icons[scale.prime.value]"
+                    />
+        </ng-container>
+        <ng-container [ngSwitch]="scale.secondary.scale" secondary>
+            <shc-value-scale
+                    *ngSwitchDefault
+                    [precision]="scale.secondary.precision"
+                    [scale]="scale.secondary.scale"
+                    [sign]="scale.secondary.sign"
+                    [value]="scale.secondary.value"
+            ></shc-value-scale>
+            <shc-battery-level
+                    *ngSwitchCase="'battery'"
+                    [width]="4"
+                    [height]="8"
+                    [spacing]="0"
+                    [value]="scale.secondary.value"
+            ></shc-battery-level>
+            <shc-time-since
+                    *ngSwitchCase="'timestamp'"
+                    [timestamp]="scale.secondary.value"
+                    minScale="m"
+            ></shc-time-since
+            ><img
+                    *ngSwitchCase="'icon'"
+                    [width]="8"
+                    [height]="8"
+                    [src]="manifest.icons[scale.prime.value]"
+                    />
+        </ng-container>
     </shc-double-value>
 </ng-container>

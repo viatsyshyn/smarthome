@@ -34,7 +34,7 @@ export class ValueScaleComponent {
 
   public getRound(): string {
     const value = this.getValue().split('.')[0];
-    return (parseInt(value, 10) > 0 && this.sign ? '+' : '') + value;
+    return (parseInt(value, 10) >= 0 && this.sign ? '+' : '') + value;
   }
 
   public hasFraction(): boolean {

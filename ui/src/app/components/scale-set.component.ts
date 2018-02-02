@@ -21,4 +21,5 @@ export interface IScaleSettings {
 })
 export class ScaleSetComponent {
   @Input() public scales: IScaleSettings[];
+  @Input() public manifest: any = null;
 }

@@ -7,7 +7,7 @@
         <div class="item" *ngFor="let device of devices" matTooltip="{{device.title}}" ngDraggable [bounds]="HomeMap">
             <div class="wrapper">
                 <shc-icon-device [active]="device.initialized" [lastUpdated]="device.lastUpdated">
-                    <shc-scale-set [scales]="device.scales"></shc-scale-set>
+                    <shc-scale-set [scales]="device.scales" [manifest]="device.manifest"></shc-scale-set>
                 </shc-icon-device>
             </div>
         </div>
