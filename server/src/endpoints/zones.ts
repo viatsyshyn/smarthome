@@ -1,12 +1,19 @@
-import {Express} from 'express';
+import {Request} from 'express';
+import {BaseEndpoint} from './shared';
+import {ILoggerFactory, ILOGGERFACTORY, IStorage, ISTORAGE} from '../models';
+import {inject, injectable} from 'inversify';
+const route = require('route-decorators');
 
-import {ILogger} from '../models';
-import {Storage} from '../services/storage';
-import {Cache} from '../services/cache';
-import {PubSub} from '../services/pubsub';
-import {async_wrapper} from './shared';
+@injectable()
+export class ZonesEndpoints extends BaseEndpoint {
 
-export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSub, logger: ILogger): void {
+  constructor(
+    @inject(ILOGGERFACTORY) factory: ILoggerFactory,
+    @inject(ISTORAGE) private storage: IStorage
+  ) {
+    super(factory('zones'));
+  }
+
 
   /**
    * @swagger
@@ -21,9 +28,10 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: zones list
    */
-  app.get('/zones', async_wrapper(logger, async () => {
-    return await storage.get('*', 'zones') || [];
-  }));
+  @route.get('/zones')
+  async get(): Promise<any> {
+    return await this.storage.get('*', 'zones') || [];
+  }
 
   /**
    * @swagger
@@ -62,7 +70,8 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: zones list
    */
-  app.put('/zone/:zone', async_wrapper(logger, async req => {
+  @route.put('/zone/:zone')
+  async put(req: Request): Promise<any> {
     const zone = req.params.zone;
 
     if (!zone) {
@@ -70,10 +79,10 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
     }
     // TODO: change to native mongodb push
 
-    let zones = await storage.get<string[]>('*', 'zones') || [];
+    let zones = await this.storage.get<string[]>('*', 'zones') || [];
     zones.push(zone);
-    return await storage.set('*', 'zones', zones.filter(x => x));
-  }));
+    return await this.storage.set('*', 'zones', zones.filter(x => x));
+  }
 
   /**
    * @swagger
@@ -96,11 +105,12 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: zones list
    */
-  app.delete('/zone/:zone', async_wrapper(logger, async req => {
+  @route.delete('/zone/:zone')
+  async delete(req: Request): Promise<any> {
     // TODO: change to native mongodb remove
 
-    let zones = await storage.get<string[]>('*', 'zones') || [];
+    let zones = await this.storage.get<string[]>('*', 'zones') || [];
     zones = zones.filter(x => x !== req.params.zone);
-    return await storage.set('*', 'zones', zones);
-  }));
+    return await this.storage.set('*', 'zones', zones);
+  }
 }

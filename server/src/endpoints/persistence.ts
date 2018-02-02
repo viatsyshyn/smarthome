@@ -1,12 +1,19 @@
-import {Express} from 'express';
+import {inject, injectable} from 'inversify';
+const route = require('route-decorators');
+import {BaseEndpoint} from './shared';
+import {ICache, ICACHE, ILoggerFactory, ILOGGERFACTORY, IStorage, ISTORAGE} from '../models';
+import {Request} from 'express';
 
-import {ILogger} from '../models';
-import {Storage} from '../services/storage';
-import {Cache} from '../services/cache';
-import {PubSub} from '../services/pubsub';
-import {async_wrapper} from './shared';
+@injectable()
+export class PersistenceEndpoints extends BaseEndpoint {
 
-export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSub, logger: ILogger): void {
+  constructor(
+    @inject(ILOGGERFACTORY) factory: ILoggerFactory,
+    @inject(ICACHE) private cache: ICache,
+    @inject(ISTORAGE) private storage: IStorage
+  ) {
+    super(factory('persistance'));
+  }
 
   /**
    * @swagger
@@ -34,11 +41,12 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: ufo devices list
    */
-  app.get('/cached/:device/:key', async_wrapper(logger, (req) => {
+  @route.get('/cached/:device/:key')
+  async cached(req: Request): Promise<any> {
     let device = req.params.device;
     let key = req.params.key;
-    return cache.get(`${device}::${key}`);
-  }));
+    return this.cache.get(`${device}::${key}`);
+  }
 
   /**
    * @swagger
@@ -61,10 +69,11 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: vale
    */
-  app.get('/storage/:device', async_wrapper(logger, (req) => {
+  @route.get('/storage/:device')
+  async stored(req: Request): Promise<any> {
     let device = req.params.device;
-    return storage.all(device);
-  }));
+    return this.storage.all(device);
+  }
 
   /**
    * @swagger
@@ -92,11 +101,12 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: vale
    */
-  app.get('/storage/:device/:key', async_wrapper(logger, (req) => {
+  @route.get('/storage/:device/:key')
+  async setting(req: Request): Promise<any> {
     let device = req.params.device;
     let key = req.params.key;
-    return storage.get(device, key);
-  }));
+    return this.storage.get(device, key);
+  }
 
   /**
    * @swagger
@@ -129,10 +139,10 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: value
    */
-  app.put('/storage/:device/:key', async_wrapper(logger, (req) => {
+  @route.put('/storage/:device/:key')
+  async put(req: Request): Promise<any> {
     let device = req.params.device;
     let key = req.params.key;
-    console.log('SET:', device, key, req.body);
-    return storage.set(device, key, req.body);
-  }));
+    return this.storage.set(device, key, req.body);
+  }
 }

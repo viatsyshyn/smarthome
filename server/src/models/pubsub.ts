@@ -1,5 +1,8 @@
+export type TMessageHandler<T = any> = (msg: T, topic: string) => void;
+
 export interface IPubSub {
-    id(): string;
-    sub<T = any>(topic: string, cb: (msg: T) => void): void;
-    pub<T = any>(topic: string, msg: T): void;
+  sub<T = any>(topic: string, cb: TMessageHandler<T>): IPubSub;
+  pub<T = any>(topic: string, msg: T): IPubSub;
 }
+
+export const IPUBSUB = Symbol.for('IPubSub');

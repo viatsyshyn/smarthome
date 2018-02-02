@@ -1,5 +1,5 @@
 apps:
-  - script   : ./server/dist/api.js
+  - script   : ./server/dist/src/api.js
     name     : 'api'
     instances: 1
     cwd      : .
@@ -10,7 +10,7 @@ apps:
       CACHE: redis://127.0.0.1
       STORAGE: mongodb://127.0.0.1/smarthome
       PUBSUB: mqtt://127.0.0.1
-  - script   : ./server/dist/worker.js
+  - script   : ./server/dist/src/worker.js
     name     : 'worker'
     instances: 1
     cwd      : .

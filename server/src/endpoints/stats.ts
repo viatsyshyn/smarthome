@@ -1,12 +1,18 @@
-import {Express} from 'express';
+import {Request} from 'express';
+import {BaseEndpoint} from './shared';
+import {inject, injectable} from 'inversify';
+import {ILoggerFactory, ILOGGERFACTORY, IStorage, ISTORAGE} from '../models';
+const route = require('route-decorators');
 
-import {ILogger} from '../models';
-import {Storage} from '../services/storage';
-import {Cache} from '../services/cache';
-import {PubSub} from '../services/pubsub';
-import {async_wrapper} from './shared';
+@injectable()
+export class StatsEndpoints extends BaseEndpoint {
 
-export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSub, logger: ILogger): void {
+  constructor(
+    @inject(ILOGGERFACTORY) factory: ILoggerFactory,
+    @inject(ISTORAGE) private storage: IStorage
+  ) {
+    super(factory('stats'));
+  }
 
   /**
    * @swagger
@@ -47,24 +53,26 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: device stats
    */
-  app.get('/history/:device', async_wrapper(logger, async (req) => {
+  @route.get('/history/:device')
+  async device(req: Request): Promise<any> {
     const device = req.params.device;
     const property = req.params.property || undefined;
     const since = new Date(req.query.since);
     const till = new Date(req.query.till);
     const interval = parseInt(req.query.interval, 10);
-    const manifest: any = await storage.get(device, 'manifest');
-    return await storage.stats(device, property, since, till, interval, manifest.mqtt.out);
-  }));
+    const manifest: any = await this.storage.get(device, 'manifest');
+    return await this.storage.stats(device, property, since, till, interval, manifest.mqtt.out);
+  }
 
-  app.get('/history/:device/:property', async_wrapper(logger, async (req) => {
+  @route.get('/history/:device/:property')
+  async property(req: Request): Promise<any> {
     const device = req.params.device;
     const property = req.params.property || undefined;
     const since = new Date(req.query.since);
     const till = new Date(req.query.till);
     const interval = parseInt(req.query.interval, 10);
-    const manifest: any = await storage.get(device, 'manifest');
-    return await storage.stats(device, property, since, till, interval, manifest.mqtt.out);
-  }));
+    const manifest: any = await this.storage.get(device, 'manifest');
+    return await this.storage.stats(device, property, since, till, interval, manifest.mqtt.out);
+  }
 
 }

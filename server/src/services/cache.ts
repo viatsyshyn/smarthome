@@ -1,29 +1,26 @@
+import { injectable, inject } from 'inversify';
 import Redis = require('redis');
-import {ILogger, ICache} from '../models';
+import {ILogger, ILoggerFactory, ILOGGERFACTORY, ICache} from '../models';
 
-export class Cache {
-  private redis: Redis.RedisClient;
+export const REDIS = Symbol.for('Redis');
+
+@injectable()
+export class Cache implements ICache {
   private logger: ILogger;
 
-  async init(url: string, logger: ILogger): Promise<void> {
-    this.logger = logger;
-    logger.log(`Connecting to ${url}`);
-    return new Promise<void>((resolve, reject) => {
-      this.redis = Redis
-        .createClient(url)
-        .on('connect', () => {
-          logger.info(`Initialized`);
-          resolve();
-        });
-    });
+  constructor(
+    @inject(ILOGGERFACTORY) factory: ILoggerFactory,
+    @inject(REDIS) private redis: Redis.RedisClient
+  ) {
+    this.logger = factory('cache');
   }
 
-  async get<T = any>(key: string): Promise<T> {
+  async get<T = any>(key: string, def: T = null): Promise<T> {
     this.logger.log(`Get ${key}`);
     return new Promise<T>((resolve, reject) => {
       this.redis.get(key, (err, value) => {
         this.logger.log(`Get ${key} ${err || value}`);
-        err ? reject(err) : resolve(JSON.parse(value));
+        err ? reject(err) : resolve(JSON.parse(value) || def);
       });
     });
   }
@@ -37,14 +34,4 @@ export class Cache {
       });
     });
   }
-
-  getDeviceCache(device: string): ICache {
-    return <ICache>{
-      get: <T = any>(key: string): Promise<T> => this.get<T>(`${device}::${key}`),
-      set: <T = any>(key: string, value: T): Promise<T> => this.set<T>(`${device}::${key}`, value)
-    };
-  }
 }
-
-const cache = new Cache();
-export default cache;

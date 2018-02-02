@@ -3,22 +3,23 @@
     "module": "commonjs",
     "target": "es6",
     "lib": ["es6","es2015"],
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "sourceMap": true,
     "outDir": "dist",
     "baseUrl": "../",
+    "rootDir": "../",
     "paths": {
       "*": [
         "node_modules/*",
-        "src/types/*"
+        "test/types/*"
       ]
     }
   },
   "include": [
-    "src/**/*"
+    "test/unit/**/*"
   ],
   "exclude": [
     "src/typings/*",

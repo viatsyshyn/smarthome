@@ -1,26 +1,10 @@
+import { injectable, inject } from 'inversify';
 import MongodbClient = require('mongodb');
-import {ILogger, IStorage} from '../models';
+import {IDeviceSetting, IEvent, ILogger, ILoggerFactory, ILOGGERFACTORY, IStorage, ITimestamped} from '../models';
 
 import _ = require('lodash');
 
-export interface IDeviceSetting<T = any> {
-  device: string;
-  key: string;
-  data: T;
-}
-
-export interface IEvent<T = any> {
-  device: string;
-  state: string;
-  topic: string;
-  property: string;
-  timestamp: number;
-  message: T;
-}
-
-export interface ITimestamped {
-  timestamp: number;
-}
+export const MONGODB = Symbol.for('MongoDB');
 
 const SETTINGS = 'settings';
 const EVENTS = 'events';
@@ -35,18 +19,25 @@ function query(q: any): any {
   return q;
 }
 
-export class Storage {
-  private db: MongodbClient.Db;
+@injectable()
+export class Storage implements IStorage {
   private logger: ILogger;
 
-  async init(url: string, logger: ILogger): Promise<void> {
-    this.logger = logger;
-    logger.log(`Connecting to ${url}`);
-    this.db = await MongodbClient.connect(url);
-    logger.info('Initialized');
+  constructor(
+    @inject(ILOGGERFACTORY) factory: ILoggerFactory,
+    @inject(MONGODB) private db: MongodbClient.Db
+  ) {
+    this.logger = factory('storage');
   }
 
-  async set<T>(device: string, key: string, data: T): Promise<void> {
+  async remove(device: string): Promise<void> {
+    await this.db.collection(SETTINGS)
+      .deleteMany(query({device}));
+
+    return;
+  }
+
+  async set<T = any>(device: string, key: string, data: T): Promise<void> {
     this.logger.log(`Set ${device}::${key} = ${JSON.stringify(data)}`);
 
     if (data === undefined) {
@@ -64,14 +55,14 @@ export class Storage {
         {upsert: true});
   }
 
-  async get<T>(device: string, key: string): Promise<T | null> {
+  async get<T = any>(device: string, key: string, def: T = null): Promise<T | null> {
     let data: IDeviceSetting<T> = await this.db
       .collection(SETTINGS)
       .findOne(query({device, key}));
 
     this.logger.log(`Get ${device}::${key} = ${JSON.stringify(data)}`);
 
-    return data ? data.data : null;
+    return data ? data.data : def;
   }
 
   async query<T = any>(device: string | undefined, key: string | undefined): Promise<IDeviceSetting<T>[]> {
@@ -177,15 +168,4 @@ export class Storage {
 
     return results;
   }
-
-  getDeviceStorage(device: string): IStorage {
-    return <IStorage>{
-      get: <T>(key: string): Promise<T> => this.get(device, key),
-      set: <T>(key: string, data: T): Promise<void> => this.set(device, key, data),
-      all: (): Promise<object> => this.all(device)
-    };
-  }
 }
-
-const storage = new Storage();
-export default storage;

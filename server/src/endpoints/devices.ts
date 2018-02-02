@@ -1,12 +1,19 @@
-import {Express} from 'express';
+import {Request} from 'express';
+import {inject, injectable} from 'inversify';
+const route = require('route-decorators');
 
-import {ILogger} from '../models';
-import {IDeviceSetting, Storage} from '../services/storage';
-import {Cache} from '../services/cache';
-import {PubSub} from '../services/pubsub';
-import {async_wrapper} from './shared';
+import {ILoggerFactory, ILOGGERFACTORY, IStorage, ISTORAGE, IDeviceSetting} from '../models';
+import {BaseEndpoint} from './shared';
 
-export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSub, logger: ILogger): void {
+@injectable()
+export class DeviceEndpoints extends BaseEndpoint {
+
+  constructor(
+    @inject(ILOGGERFACTORY) factory: ILoggerFactory,
+    @inject(ISTORAGE) private storage: IStorage
+  ) {
+    super(factory('devices'));
+  }
 
   /**
    * @swagger
@@ -21,13 +28,14 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: devices settings list
    */
-  app.get('/devices', async_wrapper(logger, async () => {
-    let devices = (await storage.query(undefined, 'manifest'))
+  @route.get('/devices')
+  async all(): Promise<any> {
+    let devices = (await this.storage.query(undefined, 'manifest'))
       .filter(x => x.data != null)
       .map(x => x.device);
 
     let settings: IDeviceSetting[][] = await Promise.all(
-      devices.map(device => storage.query(device, undefined))
+      devices.map(device => this.storage.query(device, undefined))
     );
 
     return settings.map(ds => ({
@@ -36,7 +44,7 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
       manifest: ds.find(x => x.key === 'manifest').data,
       title: ds.find(x => x.key === 'title').data,
     }));
-  }));
+  }
 
   /**
    * @swagger
@@ -75,14 +83,15 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: ufo devices list
    */
-  app.patch('/device/:device', async_wrapper(logger, async req => {
+  @route.patch('/device/:device')
+  async patch(req: Request): Promise<any> {
     let device = req.params.device;
     await Promise.all([
-      storage.set(device, 'zone', req.body.zone),
+      this.storage.set(device, 'zone', req.body.zone),
     ]);
 
-    return await storage.all(device);
-  }));
+    return await this.storage.all(device);
+  }
 
   /**
    * @swagger
@@ -105,15 +114,13 @@ export function init(app: Express, storage: Storage, cache: Cache, pubsub: PubSu
    *       200:
    *         description: ufo devices list
    */
-  app.delete('/device/:device', async_wrapper(logger, async req => {
+  @route.delete('/device/:device')
+  async delete(req: Request): Promise<any> {
     let device = req.params.device;
-    await Promise.all([
-      storage.set(device, 'zone', undefined),
-      storage.set(device, 'manifest', undefined)
-    ]);
+    await this.storage.remove(device);
 
-    pubsub.pub('_server/device-forget', device);
+    // pubsub.pub(`${device}/forget`, 1);
 
-    return await storage.all(device);
-  }));
+    return await this.storage.all(device);
+  }
 }

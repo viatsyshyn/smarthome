@@ -23,13 +23,16 @@
     "express": "^4.15.2",
     "express-history-api-fallback": "^2.2.1",
     "express-session": "^1.14.1",
+    "inversify": "^4.10.0",
     "lodash": "^4.17.4",
     "method-override": "^2.3.7",
     "mongodb": "^2.2.22",
     "mqtt": "^2.3.0",
     "mqtt-regex": "^1.0.5",
     "node-eval": "^2.0.0",
-    "redis": "^2.7.0"
+    "redis": "^2.7.0",
+    "reflect-metadata": "^0.1.12",
+    "route-decorators": "^0.2.2"
   },
   "devDependencies": {
     "base64-img": "^1.0.3",
