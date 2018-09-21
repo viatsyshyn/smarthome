@@ -16,15 +16,22 @@ function async_wrapper(logger: ILogger, cb: (req: Request) => Promise<any>, scop
 
 @injectable()
 export class BaseEndpoint {
-  $routes: any[] = [];
-
   constructor(
     protected logger: ILogger
   ) {}
 
   public register(app: Express) {
-    for (const {method, url, middleware, fnName} of this.$routes) {
-      (<any>app)[method](url, ...middleware, async_wrapper(this.logger, (<any>this)[fnName], this))
+    const proto = Object.getPrototypeOf(<any>this);
+    const name = proto.constructor.name;
+    const routes = Object.getOwnPropertyNames(proto)
+        .filter(name => name.startsWith('$$route_'))
+        .map(name => ({
+          ...proto[name],
+          fnName: name.replace('$$route_', '')
+        }));
+    for (const {method, path, middleware, fnName} of routes) {
+      this.logger.log(`register ${name} ${method} ${path}`);
+      (<any>app)[method](path, ...middleware, async_wrapper(this.logger, (<any>this)[fnName], this))
     }
   }
 }

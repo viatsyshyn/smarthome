@@ -22,20 +22,24 @@ export async function setup(): Promise<Container> {
   logger.info(`MongoDB Initialized`);
   kernel.bind<MongodbClient.Db>(MONGODB).toConstantValue(db);
 
-  const redis = await new Promise<Redis.RedisClient>((resolve, reject) => Redis
+  const redis = await new Promise<Redis.RedisClient>((resolve, reject) => {
+    const instance = Redis
       .createClient(process.env.CACHE)
       .on('connect', () => {
         logger.info(`Redis Initialized`);
-        resolve();
-      }));
+        resolve(instance);
+      })
+  });
   kernel.bind<Redis.RedisClient>(REDIS).toConstantValue(redis);
 
-  const mqtt = await new Promise<Mqtt.MqttClient>((resolve) => Mqtt
+  const mqtt = await new Promise<Mqtt.MqttClient>((resolve) => {
+    const instance = Mqtt
       .connect(process.env.PUBSUB)
       .once('connect', () => {
         logger.info('MQTT Initialized');
-        resolve();
-      }));
+        resolve(instance);
+      })
+  });
   kernel.bind<Mqtt.MqttClient>(MQTT).toConstantValue(mqtt);
 
   kernel.bind<ICache>(ICACHE).to(Cache);

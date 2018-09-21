@@ -52,8 +52,8 @@ export interface IDeviceWidget {
 export interface IManifestv1 {
   version: 1 | '1' | '1.0';
   device: string;
-  description: string;
-  icons: {
+  description?: string;
+  icons?: {
     16: string;
     32: string;
     48: string;
@@ -61,13 +61,13 @@ export interface IManifestv1 {
     128: string;
   },
   mqtt: {
-    idlePeriodSec: number,
-    out: IDevicePropertyOut[],
-    in: IDevicePropertyIn[]
+    idlePeriodSec?: number,
+    out?: IDevicePropertyOut[],
+    in?: IDevicePropertyIn[]
   },
-  ui: {
-    icon: IDeviceWidget[],
-    devices: IDeviceWidget[]
+  ui?: {
+    icon?: IDeviceWidget[],
+    devices?: IDeviceWidget[]
   }
 }
 

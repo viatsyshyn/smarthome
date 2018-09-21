@@ -18,7 +18,8 @@
     "tslint": "tslint",
     "build": "npm run build:manifest",
     "clean:all": "rimraf data",
-    "build:manifest": "node ./manifest.build.js"
+    "build:manifest": "node ./manifest.build.js",
+    "start": "npm run emu"
   },
   "dependencies": {
     "mqtt": "^2.15.0"
